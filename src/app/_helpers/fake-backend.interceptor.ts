@@ -46,5 +46,13 @@ export class FakeBackendInterceptor implements HttpInterceptor {
         function ok(body?: User): Observable<HttpEvent<User | null>> {
             return of(new HttpResponse({ status: 200, body }));
         }
+
+        function generateJwtToken() {
+            // create token that expires in 15 minutes
+            const token = {
+                exp: Date.now() + 1000 * 60 * 15
+            }
+            return `fake-jwt-token.${btoa( JSON.stringify(token) )}`;
+        }
     }
 }
