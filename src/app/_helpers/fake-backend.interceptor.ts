@@ -46,6 +46,30 @@ export class FakeBackendInterceptor implements HttpInterceptor {
     constructor() { }
 
     intercept(request: HttpRequest<{ username: string, password: string }>, next: HttpHandler): Observable<HttpEvent<ResponseUser | null>> {
+        function authenticate(): Observable<HttpEvent<ResponseUser | null>> {
+            if (body === null) {
+                return error('body is null');
+            }
+            const { username, password } = body;
+            // search in fake db
+            const user = users.find(u => u.username === username && u.password === password);
+            if (!user) {
+                return error('Username or password is incorrect');
+            }
+
+            user.refreshTokens.push( generateRefreshToken() );
+            // update user in fake db
+            localStorage.setItem(usersKey, JSON.stringify(user));
+
+            return ok({
+                id: user.id,
+                firstName: user.firstName,
+                lastName: user.lastName,
+                username: user.username,
+                jwtToken: generateJwtToken()
+            });
+        }
+
         function error(message: string): Observable<HttpEvent<ResponseUser | null>> {
             return throwError(() => new HttpErrorResponse({ status: 400, error: {message} }));
         }
