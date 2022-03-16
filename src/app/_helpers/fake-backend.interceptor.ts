@@ -54,6 +54,14 @@ export class FakeBackendInterceptor implements HttpInterceptor {
             }
             return `fake-jwt-token.${btoa( JSON.stringify(tokenPayload) )}`;
         }
+        function generateRefreshToken() {
+            const token = Date.now().toString();
+
+            // add token cookie that expires in 7 days
+            const expires = new Date( Date.now() + 7 * 24 * 60 * 60 * 1000 ).toUTCString();
+            document.cookie = `fakeRefreshToken=${token}; expires=${expires}; path=/`;
+
+            return token;
         }
     }
 }
