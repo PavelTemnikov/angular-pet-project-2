@@ -7,6 +7,8 @@ import {
     HttpResponse,
     HttpErrorResponse
 } from '@angular/common/http';
+import { delay, Observable, of, throwError } from 'rxjs';
+
 interface User {
     id: number;
     firstName: string;
@@ -46,6 +48,21 @@ export class FakeBackendInterceptor implements HttpInterceptor {
     constructor() { }
 
     intercept(request: HttpRequest<{ username: string, password: string }>, next: HttpHandler): Observable<HttpEvent<ResponseUser | null>> {
+        const { url, method, headers, body } = request;
+
+        return handleRoute().pipe(
+            delay(2000)
+        );
+
+        function handleRoute(): Observable<HttpEvent<ResponseUser | null>> {
+            switch (true) {
+                case url.endsWith('/users/authenticate') && method === 'POST':
+                    return authenticate();
+                default:
+                    return next.handle(request);
+            }
+        }
+
         function authenticate(): Observable<HttpEvent<ResponseUser | null>> {
             if (body === null) {
                 return error('body is null');
