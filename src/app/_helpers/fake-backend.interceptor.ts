@@ -12,14 +12,21 @@ interface User {
     firstName: string;
     lastName: string;
     username: string;
+}
+
+interface DbUser extends User {
     password: string;
     refreshTokens: string[];
+}
+
+interface ResponseUser extends User {
+    jwtToken: string;
 }
 
 // init fake data base
 const usersKey = 'jwt-refresh-token-users';
 const rawUsers = localStorage.getItem(usersKey);
-const users: User[] = rawUsers ? JSON.parse(rawUsers) : [];
+const users: DbUser[] = rawUsers ? JSON.parse(rawUsers) : [];
 
 if (!users.length) {
     users.push({
@@ -38,12 +45,12 @@ export class FakeBackendInterceptor implements HttpInterceptor {
 
     constructor() { }
 
-    intercept(request: HttpRequest<{ username: string, password: string }>, next: HttpHandler): Observable<HttpEvent<User | null>> {
-        function error(message: string): Observable<HttpEvent<User | null>> {
+    intercept(request: HttpRequest<{ username: string, password: string }>, next: HttpHandler): Observable<HttpEvent<ResponseUser | null>> {
+        function error(message: string): Observable<HttpEvent<ResponseUser | null>> {
             return throwError(() => new HttpErrorResponse({ status: 400, error: {message} }));
         }
 
-        function ok(body?: User): Observable<HttpEvent<User | null>> {
+        function ok(body?: ResponseUser): Observable<HttpEvent<ResponseUser | null>> {
             return of(new HttpResponse({ status: 200, body }));
         }
 
@@ -54,6 +61,7 @@ export class FakeBackendInterceptor implements HttpInterceptor {
             }
             return `fake-jwt-token.${btoa( JSON.stringify(tokenPayload) )}`;
         }
+
         function generateRefreshToken() {
             const token = Date.now().toString();
 
