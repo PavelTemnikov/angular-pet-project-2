@@ -39,5 +39,12 @@ export class FakeBackendInterceptor implements HttpInterceptor {
     constructor() { }
 
     intercept(request: HttpRequest<{ username: string, password: string }>, next: HttpHandler): Observable<HttpEvent<User | null>> {
+        function error(message: string): Observable<HttpEvent<User | null>> {
+            return throwError(() => new HttpErrorResponse({ status: 400, error: {message} }));
+        }
+
+        function ok(body?: User): Observable<HttpEvent<User | null>> {
+            return of(new HttpResponse({ status: 200, body }));
+        }
     }
 }
