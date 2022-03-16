@@ -49,10 +49,11 @@ export class FakeBackendInterceptor implements HttpInterceptor {
 
         function generateJwtToken() {
             // create token that expires in 15 minutes
-            const token = {
-                exp: Date.now() + 1000 * 60 * 15
+            const tokenPayload = {
+                exp: Date.now() + 15 * 60 * 1000
             }
-            return `fake-jwt-token.${btoa( JSON.stringify(token) )}`;
+            return `fake-jwt-token.${btoa( JSON.stringify(tokenPayload) )}`;
+        }
         }
     }
 }
