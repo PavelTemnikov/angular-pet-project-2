@@ -7,7 +7,7 @@ import {
     HttpResponse,
     HttpErrorResponse
 } from '@angular/common/http';
-import { delay, Observable, of, throwError } from 'rxjs';
+import { delay, dematerialize, materialize, Observable, of, throwError } from 'rxjs';
 
 import { IDbUser, IUser } from '../_models'
 
@@ -37,7 +37,10 @@ export class FakeBackendInterceptor implements HttpInterceptor {
         const { url, method, headers, body } = request;
 
         return handleRoute().pipe(
-            delay(2000)
+            // materialize and dematerialize to delay errors too
+            materialize(),
+            delay(2000),
+            dematerialize()
         );
 
         // fake backend logic
