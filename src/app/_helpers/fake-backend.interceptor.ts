@@ -52,7 +52,7 @@ export class FakeBackendInterceptor implements HttpInterceptor {
 
         function authenticate(): Observable<HttpEvent<IUser | null>> {
             if (body === null) {
-                throw new Error('body is null');
+                return throwError(() => new Error('body is null'));
             }
             const { username, password } = body;
             // search in fake db
