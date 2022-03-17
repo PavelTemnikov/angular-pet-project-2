@@ -1,7 +1,7 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 import { AuthenticationService } from '../_services/authentication.service';
 
@@ -17,7 +17,7 @@ export class LoginComponent implements OnInit {
     public loading = false;
     private _defaultErrorMessage = 'Some errors occur, please reload page';
 
-    constructor(private _formBuilder: FormBuilder, private _authenticationService: AuthenticationService, private _router: Router) { }
+    constructor(private _formBuilder: FormBuilder, private _authenticationService: AuthenticationService, private _router: Router, private _route: ActivatedRoute) { }
 
     ngOnInit(): void {
         this.loginForm = this._formBuilder.group({
@@ -33,7 +33,7 @@ export class LoginComponent implements OnInit {
         this.loading = true;
         this._authenticationService.login(this.username.value, this.password.value)
             .subscribe({
-                next: () => this._router.navigate(['home']),
+                next: () => this._router.navigate([this._route.snapshot.queryParams['returnUrl'] || '']),
                 error: (error: HttpErrorResponse | Error) => {
                     this.loading = false;
                     if (error instanceof Error) {
@@ -41,7 +41,6 @@ export class LoginComponent implements OnInit {
                         throw error;
                     }
                     this.errorMessage = error.error.message;
-                    
                 }
             });
     }
