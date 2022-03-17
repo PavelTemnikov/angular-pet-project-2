@@ -12,9 +12,10 @@ import { AuthenticationService } from '../_services/authentication.service';
 })
 export class LoginComponent implements OnInit {
 
-    loginForm: FormGroup;
-    errorMessage = '';
-    loading = false;
+    public loginForm: FormGroup;
+    public errorMessage = '';
+    public loading = false;
+    private _defaultErrorMessage = 'Some errors occur, please reload page';
 
     constructor(private _formBuilder: FormBuilder, private _authenticationService: AuthenticationService, private _router: Router) { }
 
@@ -36,6 +37,7 @@ export class LoginComponent implements OnInit {
                 error: (error: HttpErrorResponse | Error) => {
                     this.loading = false;
                     if (error instanceof Error) {
+                        this.errorMessage = this._defaultErrorMessage;
                         throw error;
                     }
                     this.errorMessage = error.error.message;
