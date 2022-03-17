@@ -54,6 +54,7 @@ export class FakeBackendInterceptor implements HttpInterceptor {
             delay(2000)
         );
 
+        // fake backend logic
         function handleRoute(): Observable<HttpEvent<ResponseUser | null>> {
             switch (true) {
                 case url.endsWith('/users/authenticate') && method === 'POST':
