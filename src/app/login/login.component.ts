@@ -14,6 +14,7 @@ export class LoginComponent implements OnInit {
 
     loginForm: FormGroup;
     errorMessage = '';
+    loading = false;
 
     constructor(private _formBuilder: FormBuilder, private _authenticationService: AuthenticationService, private _router: Router) { }
 
@@ -28,10 +29,12 @@ export class LoginComponent implements OnInit {
     get password() { return this.loginForm.controls['password']; }
 
     onSubmit() {
+        this.loading = true;
         this._authenticationService.login(this.username.value, this.password.value)
             .subscribe({
                 next: () => this._router.navigate(['home']),
                 error: (error: HttpErrorResponse | Error) => {
+                    this.loading = false;
                     if (error instanceof Error) {
                         throw error;
                     }

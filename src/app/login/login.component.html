@@ -25,7 +25,8 @@
                         </div>
                     </label>
                 </div>
-                <button class="btn btn-primary" [disabled]="loginForm.invalid">
+                <button class="btn btn-primary" [disabled]="loginForm.invalid || loading">
+                    <span class="spinner-border spinner-border-sm mr-1" *ngIf="loading"></span>
                     Login
                 </button>
                 <div *ngIf="errorMessage" class="alert alert-danger mt-3 mb-0">{{errorMessage}}</div>
