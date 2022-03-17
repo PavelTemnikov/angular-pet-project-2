@@ -7,7 +7,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { AppRoutingModule } from './app-routing.module';
 
 import { AppComponent } from './app.component';
-import { FakeBackendInterceptor } from './_helpers/fake-backend.interceptor';
+import { FakeBackendInterceptor } from './_helpers';
 import { LoginComponent } from './login/login.component';
 import { HomeComponent } from './home/home.component';
 
