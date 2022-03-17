@@ -9,26 +9,12 @@ import {
 } from '@angular/common/http';
 import { delay, Observable, of, throwError } from 'rxjs';
 
-interface User {
-    id: number;
-    firstName: string;
-    lastName: string;
-    username: string;
-}
-
-interface DbUser extends User {
-    password: string;
-    refreshTokens: string[];
-}
-
-interface ResponseUser extends User {
-    jwtToken: string;
-}
+import { IDbUser, IUser } from '../_models'
 
 // init fake data base
 const usersKey = 'jwt-refresh-token-users';
 const rawUsers = localStorage.getItem(usersKey);
-const users: DbUser[] = rawUsers ? JSON.parse(rawUsers) : [];
+const users: IDbUser[] = rawUsers ? JSON.parse(rawUsers) : [];
 
 if (!users.length) {
     users.push({
@@ -47,7 +33,7 @@ export class FakeBackendInterceptor implements HttpInterceptor {
 
     constructor() { }
 
-    intercept(request: HttpRequest<{ username: string, password: string }>, next: HttpHandler): Observable<HttpEvent<ResponseUser | null>> {
+    intercept(request: HttpRequest<{ username: string, password: string }>, next: HttpHandler): Observable<HttpEvent<IUser | null>> {
         const { url, method, headers, body } = request;
 
         return handleRoute().pipe(
@@ -55,7 +41,7 @@ export class FakeBackendInterceptor implements HttpInterceptor {
         );
 
         // fake backend logic
-        function handleRoute(): Observable<HttpEvent<ResponseUser | null>> {
+        function handleRoute(): Observable<HttpEvent<IUser | null>> {
             switch (true) {
                 case url.endsWith('/users/authenticate') && method === 'POST':
                     return authenticate();
@@ -64,7 +50,7 @@ export class FakeBackendInterceptor implements HttpInterceptor {
             }
         }
 
-        function authenticate(): Observable<HttpEvent<ResponseUser | null>> {
+        function authenticate(): Observable<HttpEvent<IUser | null>> {
             if (body === null) {
                 return error('body is null');
             }
@@ -88,11 +74,11 @@ export class FakeBackendInterceptor implements HttpInterceptor {
             });
         }
 
-        function error(message: string): Observable<HttpEvent<ResponseUser | null>> {
+        function error(message: string): Observable<HttpEvent<IUser | null>> {
             return throwError(() => new HttpErrorResponse({ status: 400, error: {message} }));
         }
 
-        function ok(body?: ResponseUser): Observable<HttpEvent<ResponseUser | null>> {
+        function ok(body?: IUser): Observable<HttpEvent<IUser | null>> {
             return of(new HttpResponse({ status: 200, body }));
         }
 
