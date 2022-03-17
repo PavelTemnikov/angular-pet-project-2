@@ -77,12 +77,16 @@ export class FakeBackendInterceptor implements HttpInterceptor {
             });
         }
 
+        function ok(body?: IUser): Observable<HttpEvent<IUser | null>> {
+            return of(new HttpResponse({ status: 200, body }));
+        }
+
         function error(message: string): Observable<HttpEvent<IUser | null>> {
             return throwError(() => new HttpErrorResponse({ status: 400, error: {message} }));
         }
 
-        function ok(body?: IUser): Observable<HttpEvent<IUser | null>> {
-            return of(new HttpResponse({ status: 200, body }));
+        function unauthorized(): Observable<HttpEvent<IUser | null>> {
+            return throwError(() => new HttpErrorResponse({ status: 401, error: { message: 'Unauthorized' } }));
         }
 
         function generateJwtToken() {
