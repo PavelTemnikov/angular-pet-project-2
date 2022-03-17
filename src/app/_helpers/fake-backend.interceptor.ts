@@ -102,5 +102,16 @@ export class FakeBackendInterceptor implements HttpInterceptor {
 
             return token;
         }
+
+        function getRefreshToken() {
+            let token = null;
+            const tokenString = document.cookie
+                .split(';')
+                .find(part => part.startsWith('fakeRefreshToken'));
+            if (tokenString) {
+                token = tokenString.split('=')[1];
+            }
+            return token;
+        }
     }
 }
