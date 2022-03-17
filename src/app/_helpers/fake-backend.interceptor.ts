@@ -63,7 +63,7 @@ export class FakeBackendInterceptor implements HttpInterceptor {
 
             user.refreshTokens.push( generateRefreshToken() );
             // update user in fake db
-            localStorage.setItem(usersKey, JSON.stringify(user));
+            localStorage.setItem(usersKey, JSON.stringify(users));
 
             return ok({
                 id: user.id,
