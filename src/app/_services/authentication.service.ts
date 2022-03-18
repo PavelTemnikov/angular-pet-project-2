@@ -21,8 +21,15 @@ export class AuthenticationService {
 
     login(username: string, password: string): Observable<void> {
         return this._http.post<IUser>(`${environment.apiUrl}/users/authenticate`, { username, password }, { withCredentials: true })
-            .pipe(
-                map(user => this._userSubject$.next(user))
-            );
+            .pipe( map(this._emitUser) );
+    }
+
+    refreshToken(): Observable<void> {
+        return this._http.post<IUser>(`${environment.apiUrl}/users/refresh-token`, {}, { withCredentials: true })
+            .pipe( map(this._emitUser) );
+    }
+
+    private _emitUser(user: IUser): void {
+        this._userSubject$.next(user);
     }
 }
