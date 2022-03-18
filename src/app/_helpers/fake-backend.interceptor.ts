@@ -89,7 +89,7 @@ export class FakeBackendInterceptor implements HttpInterceptor {
             return throwError(() => new HttpErrorResponse({ status: 401, error: { message: 'Unauthorized' } }));
         }
 
-        function generateJwtToken() {
+        function generateJwtToken(): string {
             // create token that expires in 15 minutes
             const tokenPayload = {
                 exp: Date.now() + 15 * 60 * 1000
@@ -97,7 +97,7 @@ export class FakeBackendInterceptor implements HttpInterceptor {
             return `fake-jwt-token.${btoa( JSON.stringify(tokenPayload) )}`;
         }
 
-        function generateRefreshToken() {
+        function generateRefreshToken(): string {
             const token = Date.now().toString();
 
             // add token cookie that expires in 7 days
@@ -107,7 +107,7 @@ export class FakeBackendInterceptor implements HttpInterceptor {
             return token;
         }
 
-        function getRefreshToken() {
+        function getRefreshToken(): string | null {
             let token = null;
             const tokenString = document.cookie
                 .split(';')
