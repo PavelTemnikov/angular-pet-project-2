@@ -81,11 +81,11 @@ export class FakeBackendInterceptor implements HttpInterceptor {
             return of(new HttpResponse({ status: 200, body }));
         }
 
-        function error(message: string): Observable<HttpEvent<IUser>> {
+        function error(message: string): Observable<never> {
             return throwError(() => new HttpErrorResponse({ status: 400, error: {message} }));
         }
 
-        function unauthorized(): Observable<HttpEvent<IUser>> {
+        function unauthorized(): Observable<never> {
             return throwError(() => new HttpErrorResponse({ status: 401, error: { message: 'Unauthorized' } }));
         }
 
