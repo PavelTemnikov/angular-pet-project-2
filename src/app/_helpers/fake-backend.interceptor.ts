@@ -33,7 +33,7 @@ export class FakeBackendInterceptor implements HttpInterceptor {
 
     constructor() { }
 
-    intercept(request: HttpRequest<{ username: string, password: string }>, next: HttpHandler): Observable<HttpEvent<IUser | null>> {
+    intercept(request: HttpRequest<{ username: string, password: string }>, next: HttpHandler): Observable<HttpEvent<IUser>> {
         const { url, method, headers, body } = request;
 
         return handleRoute().pipe(
@@ -44,7 +44,7 @@ export class FakeBackendInterceptor implements HttpInterceptor {
         );
 
         // fake backend logic
-        function handleRoute(): Observable<HttpEvent<IUser | null>> {
+        function handleRoute(): Observable<HttpEvent<IUser>> {
             switch (true) {
                 case url.endsWith('/users/authenticate') && method === 'POST':
                     return authenticate();
@@ -53,7 +53,7 @@ export class FakeBackendInterceptor implements HttpInterceptor {
             }
         }
 
-        function authenticate(): Observable<HttpEvent<IUser | null>> {
+        function authenticate(): Observable<HttpEvent<IUser>> {
             if (body === null) {
                 return throwError(() => new Error('body is null'));
             }
@@ -77,15 +77,15 @@ export class FakeBackendInterceptor implements HttpInterceptor {
             });
         }
 
-        function ok(body?: IUser): Observable<HttpEvent<IUser | null>> {
+        function ok(body?: IUser): Observable<HttpEvent<IUser>> {
             return of(new HttpResponse({ status: 200, body }));
         }
 
-        function error(message: string): Observable<HttpEvent<IUser | null>> {
+        function error(message: string): Observable<HttpEvent<IUser>> {
             return throwError(() => new HttpErrorResponse({ status: 400, error: {message} }));
         }
 
-        function unauthorized(): Observable<HttpEvent<IUser | null>> {
+        function unauthorized(): Observable<HttpEvent<IUser>> {
             return throwError(() => new HttpErrorResponse({ status: 401, error: { message: 'Unauthorized' } }));
         }
 
