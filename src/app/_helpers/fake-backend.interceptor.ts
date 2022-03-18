@@ -48,6 +48,8 @@ export class FakeBackendInterceptor implements HttpInterceptor {
             switch (true) {
                 case url.endsWith('/users/authenticate') && method === 'POST':
                     return authenticate();
+                case url.endsWith('/users/refresh-token') && method === 'POST':
+                    return refreshToken();
                 default:
                     return next.handle(request);
             }
@@ -73,6 +75,28 @@ export class FakeBackendInterceptor implements HttpInterceptor {
                 firstName: user.firstName,
                 lastName: user.lastName,
                 username: user.username,
+                jwtToken: generateJwtToken()
+            });
+        }
+
+        function refreshToken(): Observable<HttpEvent<IUser>> {
+            const refreshToken = getRefreshToken();
+            if (!refreshToken) {
+                return unauthorized();
+            }
+            const user = users.find(u => u.refreshTokens.includes(refreshToken));
+            if (!user) {
+                return unauthorized();
+            }
+            user.refreshTokens = user.refreshTokens.filter(rt => rt !== refreshToken);
+            user.refreshTokens.push( generateRefreshToken() );
+            localStorage.setItem(usersKey, JSON.stringify(users));
+
+            return ok({
+                id: user.id,
+                username: user.username,
+                firstName: user.firstName,
+                lastName: user.lastName,
                 jwtToken: generateJwtToken()
             });
         }
