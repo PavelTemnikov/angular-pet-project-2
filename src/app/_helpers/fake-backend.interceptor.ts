@@ -141,5 +141,21 @@ export class FakeBackendInterceptor implements HttpInterceptor {
             }
             return token;
         }
+
+        function isLoggedIn(): boolean {
+            const authHeader = headers.get('Authorization');
+            if (!authHeader?.startsWith('Bearer fake-jwt-token')) {
+                return false;
+            }
+            const jwtToken: { exp: number } = JSON.parse(
+                atob(
+                    authHeader.split('.')[1]
+                )
+            );
+            if (Date.now() > jwtToken.exp) {
+                return false;
+            }
+            return true;
+        }
     }
 }
