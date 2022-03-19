@@ -1,5 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Router } from '@angular/router';
 import { BehaviorSubject, map, Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
 
@@ -18,7 +19,7 @@ export class AuthenticationService {
         return this._userSubject$.value;
     }
 
-    constructor(private _http: HttpClient) { }
+    constructor(private _http: HttpClient, private _router: Router) { }
 
     login(username: string, password: string): Observable<void> {
         return this._http.post<IUser>(`${environment.apiUrl}/users/authenticate`, { username, password }, { withCredentials: true })
@@ -30,12 +31,23 @@ export class AuthenticationService {
             .pipe( map(this._emitUser.bind(this)) );
     }
 
-    private _emitUser(user: IUser): void {
-        this._userSubject$.next(user);
-        this.startRefreshToken();
+    logout(): Observable<void> {
+        return this._http.post<void>(`${environment.apiUrl}/users/revoke-token`, {}, { withCredentials: true })
+            .pipe(
+                map(() => {
+                    this._userSubject$.next(null);
+                    this._stopRefreshTokenTimeout();
+                    this._router.navigate(['/login']);
+                })
+            )
     }
 
-    private startRefreshToken(): void {
+    private _emitUser(user: IUser): void {
+        this._userSubject$.next(user);
+        this._startRefreshToken();
+    }
+
+    private _startRefreshToken(): void {
         if (!this.userValue) {
             return;
         }
@@ -47,5 +59,9 @@ export class AuthenticationService {
          // set a timeout to refresh the token a minute before it expires
         const timeout = jwtToken.exp - Date.now() - 1000 * 60;
         this._refreshTokenTimeout = window.setTimeout(() => this.refreshToken().subscribe(), timeout);
+    }
+
+    private _stopRefreshTokenTimeout() {
+        clearTimeout(this._refreshTokenTimeout);
     }
 }
