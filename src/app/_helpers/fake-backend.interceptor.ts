@@ -120,6 +120,13 @@ export class FakeBackendInterceptor implements HttpInterceptor {
             return ok<void>();
         }
 
+        function getUsers(): Observable<HttpEvent<IDbUser[]>> {
+            if (!isLoggedIn()) {
+                return unauthorized();
+            }
+            return ok(users);
+        }
+
         function ok<T>(body?: T): Observable<HttpEvent<T>> {
             return of(new HttpResponse({ status: 200, body }));
         }
