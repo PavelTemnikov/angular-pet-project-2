@@ -10,7 +10,7 @@ import { AppComponent } from './app.component';
 import { appInitializer, FakeBackendInterceptor, JwtInterceptor, ErrorInterceptor } from './_helpers';
 import { LoginComponent } from './login/login.component';
 import { HomeComponent } from './home/home.component';
-import { AuthenticationService } from './_services/authentication.service';
+import { AuthenticationService } from './_services';
 
 @NgModule({
     declarations: [
