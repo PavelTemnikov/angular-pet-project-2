@@ -21,12 +21,12 @@ export class AuthenticationService {
 
     login(username: string, password: string): Observable<void> {
         return this._http.post<IUser>(`${environment.apiUrl}/users/authenticate`, { username, password }, { withCredentials: true })
-            .pipe( map(this._emitUser) );
+            .pipe( map(this._emitUser.bind(this)) );
     }
 
     refreshToken(): Observable<void> {
         return this._http.post<IUser>(`${environment.apiUrl}/users/refresh-token`, {}, { withCredentials: true })
-            .pipe( map(this._emitUser) );
+            .pipe( map(this._emitUser.bind(this)) );
     }
 
     private _emitUser(user: IUser): void {
