@@ -33,7 +33,7 @@ export class FakeBackendInterceptor implements HttpInterceptor {
 
     constructor() { }
 
-    intercept(request: HttpRequest<{ username: string, password: string }>, next: HttpHandler): Observable<HttpEvent<IUser>> {
+    intercept(request: HttpRequest<{ username: string, password: string }>, next: HttpHandler): Observable<HttpEvent<IUser | void>> {
         const { url, method, headers, body } = request;
 
         return handleRoute().pipe(
@@ -44,12 +44,14 @@ export class FakeBackendInterceptor implements HttpInterceptor {
         );
 
         // fake backend logic
-        function handleRoute(): Observable<HttpEvent<IUser>> {
+        function handleRoute(): Observable<HttpEvent<IUser | void>> {
             switch (true) {
                 case url.endsWith('/users/authenticate') && method === 'POST':
                     return authenticate();
                 case url.endsWith('/users/refresh-token') && method === 'POST':
                     return refreshToken();
+                case url.endsWith('/users/revoke-token') && method === 'POST':
+                    return revokeToken();
                 default:
                     return next.handle(request);
             }
@@ -99,6 +101,23 @@ export class FakeBackendInterceptor implements HttpInterceptor {
                 lastName: user.lastName,
                 jwtToken: generateJwtToken()
             });
+        }
+
+        function revokeToken(): Observable<HttpEvent<void>> {
+            if (!isLoggedIn()) {
+                return unauthorized();
+            }
+            const refreshToken = getRefreshToken();
+            if (!refreshToken) {
+                return unauthorized();
+            }
+            const user = users.find(u => u.refreshTokens.includes(refreshToken));
+            if (!user) {
+                return unauthorized();
+            }
+            user.refreshTokens = user.refreshTokens.filter(rt => rt !== refreshToken);
+            localStorage.setItem(usersKey, JSON.stringify(users));
+            return ok<void>();
         }
 
         function ok<T>(body?: T): Observable<HttpEvent<T>> {
