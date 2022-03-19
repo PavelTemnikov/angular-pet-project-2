@@ -33,7 +33,7 @@ export class FakeBackendInterceptor implements HttpInterceptor {
 
     constructor() { }
 
-    intercept(request: HttpRequest<{ username: string, password: string }>, next: HttpHandler): Observable<HttpEvent<IUser | void>> {
+    intercept(request: HttpRequest<{ username: string, password: string }>, next: HttpHandler): Observable<HttpEvent<IUser | IDbUser[] | void>> {
         const { url, method, headers, body } = request;
 
         return handleRoute().pipe(
@@ -44,7 +44,7 @@ export class FakeBackendInterceptor implements HttpInterceptor {
         );
 
         // fake backend logic
-        function handleRoute(): Observable<HttpEvent<IUser | void>> {
+        function handleRoute(): Observable<HttpEvent<IUser | IDbUser[] | void>> {
             switch (true) {
                 case url.endsWith('/users/authenticate') && method === 'POST':
                     return authenticate();
@@ -52,6 +52,8 @@ export class FakeBackendInterceptor implements HttpInterceptor {
                     return refreshToken();
                 case url.endsWith('/users/revoke-token') && method === 'POST':
                     return revokeToken();
+                case url.startsWith('/users') && method === 'GET':
+                    return getUsers();
                 default:
                     return next.handle(request);
             }
