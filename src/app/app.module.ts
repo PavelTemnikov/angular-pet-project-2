@@ -7,7 +7,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { AppRoutingModule } from './app-routing.module';
 
 import { AppComponent } from './app.component';
-import { appInitializer, FakeBackendInterceptor, JwtInterceptor } from './_helpers';
+import { appInitializer, FakeBackendInterceptor, JwtInterceptor, ErrorInterceptor } from './_helpers';
 import { LoginComponent } from './login/login.component';
 import { HomeComponent } from './home/home.component';
 import { AuthenticationService } from './_services/authentication.service';
@@ -27,6 +27,7 @@ import { AuthenticationService } from './_services/authentication.service';
     providers: [
         { provide: APP_INITIALIZER, useFactory: appInitializer, multi: true, deps: [AuthenticationService] },
         { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
+        { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
 
         // fake backend
         { provide: HTTP_INTERCEPTORS, useClass: FakeBackendInterceptor, multi: true }
