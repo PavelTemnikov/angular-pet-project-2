@@ -70,7 +70,7 @@ export class FakeBackendInterceptor implements HttpInterceptor {
             // update user in fake db
             localStorage.setItem(usersKey, JSON.stringify(users));
 
-            return ok({
+            return ok<IUser>({
                 id: user.id,
                 firstName: user.firstName,
                 lastName: user.lastName,
@@ -92,7 +92,7 @@ export class FakeBackendInterceptor implements HttpInterceptor {
             user.refreshTokens.push( generateRefreshToken() );
             localStorage.setItem(usersKey, JSON.stringify(users));
 
-            return ok({
+            return ok<IUser>({
                 id: user.id,
                 username: user.username,
                 firstName: user.firstName,
@@ -101,7 +101,7 @@ export class FakeBackendInterceptor implements HttpInterceptor {
             });
         }
 
-        function ok(body?: IUser): Observable<HttpEvent<IUser>> {
+        function ok<T>(body?: T): Observable<HttpEvent<T>> {
             return of(new HttpResponse({ status: 200, body }));
         }
 
