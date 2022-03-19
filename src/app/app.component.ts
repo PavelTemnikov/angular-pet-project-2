@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { AuthenticationService } from './_services';
 
 @Component({
     selector: 'app-root',
@@ -8,7 +9,9 @@ import { Component } from '@angular/core';
 export class AppComponent {
     title = 'angular-pet-project';
 
-    constructor() {
+    constructor(private _authenticationService: AuthenticationService) { }
 
+    logout() {
+        this._authenticationService.logout().subscribe();
     }
 }
