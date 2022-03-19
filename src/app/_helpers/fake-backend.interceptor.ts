@@ -135,7 +135,7 @@ export class FakeBackendInterceptor implements HttpInterceptor {
             let token = null;
             const tokenString = document.cookie
                 .split(';')
-                .find(part => part.startsWith('fakeRefreshToken'));
+                .find(part => part.trim().startsWith('fakeRefreshToken'));
             if (tokenString) {
                 token = tokenString.split('=')[1];
             }
