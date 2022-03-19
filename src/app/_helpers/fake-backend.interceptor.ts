@@ -52,7 +52,7 @@ export class FakeBackendInterceptor implements HttpInterceptor {
                     return refreshToken();
                 case url.endsWith('/users/revoke-token') && method === 'POST':
                     return revokeToken();
-                case url.startsWith('/users') && method === 'GET':
+                case url.endsWith('/users') && method === 'GET':
                     return getUsers();
                 default:
                     return next.handle(request);
